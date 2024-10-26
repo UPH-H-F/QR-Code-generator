@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>QR Code Generator</title>
+    <style>
+        .logo-image {
+            width: 100px;  /* Adjust size as needed */
+            margin: 10px;
+            cursor: pointer;
+            border: 2px solid transparent; /* Default border */
+        }
+        .selected {
+            border-color: blue; /* Highlight selected image */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>QR Code Generator</h1>
+        </div>
+        <div class="content">
+            <div class="section logos">
+                <div id="logoContainer">
+                    <img src="{{ url_for('static', filename='images/ph-flag.png') }}" class="logo-image" onclick="selectLogo('ph-flag.png')">
+                    <img src="{{ url_for('static', filename='images/shopee.png') }}" class="logo-image" onclick="selectLogo('shopee.png')">
+                    <img src="{{ url_for('static', filename='images/facebook-messenger-seeklogo.png') }}" class="logo-image" onclick="selectLogo('facebook-messenger-seeklogo.png')">
+                    <img src="{{ url_for('static', filename='images/facebook-seeklogo.png') }}" class="logo-image" onclick="selectLogo('facebook-seeklogo.png')">
+                    <img src="{{ url_for('static', filename='images/instagram-new-2016-seeklogo.png') }}" class="logo-image" onclick="selectLogo('instagram-new-2016-seeklogo.png')">
+                    <img src="{{ url_for('static', filename='images/mcdo.png') }}" class="logo-image" onclick="selectLogo('mcdo.png')">
+                    <img src="{{ url_for('static', filename='images/tiktok-seeklogo.png') }}" class="logo-image" onclick="selectLogo('tiktok-seeklogo.png')">
+                    <img src="{{ url_for('static', filename='images/whatsapp-icon-seeklogo.png') }}" class="logo-image" onclick="selectLogo('whatsapp-icon-seeklogo.png')">
+                </div>
+            </div>
+            <div class="section qr-code">
+                <div id="qrCodeContainer"></div>
+            </div>
+            <div class="section colors">
+                <form id="qrForm" action="/generate" method="post">
+                    <div class="input-box">
+                        <label for="url">Enter URL or Text:</label>
+                        <input type="text" id="url" name="url" required>
+                    </div>
+                    <div class="input-box">
+                        <label for="fill_color">Fill Color:</label>
+                        <input type="color" id="fill_color" name="fill_color" value="#000000">
+                    </div>
+                    <div class="input-box">
+                        <label for="back_color">Background Color:</label>
+                        <input type="color" id="back_color" name="back_color" value="#ffffff">
+                    </div>
+                    <input type="hidden" id="selectedLogo" name="logo">
+                    <button type="submit">Generate QR Code</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectLogo(logo) {
+            document.getElementById('selectedLogo').value = logo;
+            const images = document.querySelectorAll('.logo-image');
+            images.forEach(img => img.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+    </script>
+
+<script>
+    const qrCodeContainer = document.getElementById('qrCodeContainer');
+  
+    document.getElementById('qrForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent form submission
+  
+      const formData = new FormData(this);
+      fetch('/generate', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.blob()) // Get the QR code image as a Blob
+      .then(blob => {
+        const imageUrl = URL.createObjectURL(blob); // Create an image URL
+        qrCodeContainer.innerHTML = `<img src="${imageUrl}" alt="QR Code">`; // Display the QR code
+      })
+      .catch(error => {
+        console.error('Error generating QR code:', error);
+      });
+    });
+  </script>
+</body>
+</html>
