@@ -1,2 +1,2 @@
 # QR-Code-generator
-https://uph-h-f.github.io/QR-Code-generator/
+https://www.youtube.com/watch?v=8DAmV2q4W98
